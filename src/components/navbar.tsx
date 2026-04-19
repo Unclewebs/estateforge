@@ -77,6 +77,15 @@ export function Navbar() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          {isSignedIn && (
+            <Link href="/properties/new">
+              <Button size="sm" className="gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Post Property</span>
+                <span className="sm:hidden">Post</span>
+              </Button>
+            </Link>
+          )}
           {!isSignedIn ? (
             <SignInButton>
               <Button size="sm">Sign In</Button>
@@ -84,7 +93,7 @@ export function Navbar() {
           ) : (
             <>
               {activeRole && (
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs hidden sm:inline-flex">
                   {activeRole}
                 </Badge>
               )}
