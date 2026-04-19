@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { CldUploadWidget } from "next-cloudinary";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, X, Home, Key } from "lucide-react";
 import Image from "next/image";
 
 const amenitiesOptions = [
@@ -56,7 +56,7 @@ export function PropertyForm({ initialData, mode = "create" }: PropertyFormProps
       city: "",
       state: "",
       zipCode: "",
-      country: "US",
+      country: "IN",
       images: [],
       amenities: [],
       ...initialData,
@@ -89,6 +89,47 @@ export function PropertyForm({ initialData, mode = "create" }: PropertyFormProps
 
   return (
     <form onSubmit={handleSubmit(onSubmit as never)} className="space-y-8">
+      {/* Listing Type - Sell or Rent (99acres style) */}
+      <Card>
+        <CardHeader>
+          <CardTitle>What do you want to do?</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => setValue("status", "FOR_SALE")}
+              className={`flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all ${
+                watch("status") === "FOR_SALE"
+                  ? "border-primary bg-primary/10 shadow-md"
+                  : "border-muted hover:border-primary/40 hover:bg-muted/50"
+              }`}
+            >
+              <Home className={`h-10 w-10 ${watch("status") === "FOR_SALE" ? "text-primary" : "text-muted-foreground"}`} />
+              <div className="text-center">
+                <p className={`text-lg font-semibold ${watch("status") === "FOR_SALE" ? "text-primary" : ""}`}>Sell</p>
+                <p className="text-xs text-muted-foreground">List your property for sale</p>
+              </div>
+            </button>
+            <button
+              type="button"
+              onClick={() => setValue("status", "FOR_RENT")}
+              className={`flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all ${
+                watch("status") === "FOR_RENT"
+                  ? "border-primary bg-primary/10 shadow-md"
+                  : "border-muted hover:border-primary/40 hover:bg-muted/50"
+              }`}
+            >
+              <Key className={`h-10 w-10 ${watch("status") === "FOR_RENT" ? "text-primary" : "text-muted-foreground"}`} />
+              <div className="text-center">
+                <p className={`text-lg font-semibold ${watch("status") === "FOR_RENT" ? "text-primary" : ""}`}>Rent</p>
+                <p className="text-xs text-muted-foreground">Put your property on rent</p>
+              </div>
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Basic Info */}
       <Card>
         <CardHeader>
@@ -107,8 +148,8 @@ export function PropertyForm({ initialData, mode = "create" }: PropertyFormProps
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="price">Price ($)</Label>
-              <Input id="price" type="number" {...register("price")} />
+              <Label htmlFor="price">Price (₹) {watch("status") === "FOR_RENT" ? "/ month" : ""}</Label>
+              <Input id="price" type="number" {...register("price")} placeholder={watch("status") === "FOR_RENT" ? "e.g. 25000" : "e.g. 5000000"} />
               {errors.price && <p className="text-sm text-destructive mt-1">{errors.price.message}</p>}
             </div>
             <div>
@@ -127,19 +168,6 @@ export function PropertyForm({ initialData, mode = "create" }: PropertyFormProps
                   <SelectItem value="COMMERCIAL">Commercial</SelectItem>
                   <SelectItem value="TOWNHOUSE">Townhouse</SelectItem>
                   <SelectItem value="STUDIO">Studio</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Status</Label>
-              <Select
-                value={watch("status")}
-                onValueChange={(v) => setValue("status", v as PropertyFormData["status"])}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="FOR_SALE">For Sale</SelectItem>
-                  <SelectItem value="FOR_RENT">For Rent</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -163,11 +191,11 @@ export function PropertyForm({ initialData, mode = "create" }: PropertyFormProps
               <Input id="bathrooms" type="number" {...register("bathrooms")} />
             </div>
             <div>
-              <Label htmlFor="squareFeet">Square Feet</Label>
+              <Label htmlFor="squareFeet">Area (sq.ft)</Label>
               <Input id="squareFeet" type="number" {...register("squareFeet")} />
             </div>
             <div>
-              <Label htmlFor="lotSize">Lot Size (acres)</Label>
+              <Label htmlFor="lotSize">Plot Size (sq.yd)</Label>
               <Input id="lotSize" type="number" step="0.01" {...register("lotSize")} />
             </div>
             <div>
